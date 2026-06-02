@@ -49,6 +49,15 @@ public class HardcoreSettingsScreen extends Screen {
         int startX = this.width / 2 + 10;
         int labelX = this.width / 2 - 140;
 
+        // Enter First Time Setup Button
+        Button setupBtn = Button.builder(Component.literal("Enter First Time Setup"), b -> {
+            if (this.minecraft != null) {
+                this.minecraft.setScreen(new FirstTimeSetupScreen(this));
+            }
+        }).bounds(this.width / 2 - 100, centerY - 105, 200, 20).build();
+        setupBtn.active = this.canEditDeathLimit && isHardcore;
+        this.addRenderableWidget(setupBtn);
+
         // Toggles
         Button spawnPenaltyBtn = Button.builder(Component.literal(this.spawnPenalty ? "ON" : "OFF"), b -> {
             this.spawnPenalty = !this.spawnPenalty;
@@ -143,5 +152,13 @@ public class HardcoreSettingsScreen extends Screen {
             ));
             this.minecraft.setScreen(this.parent);
         }
+    }
+
+    public void updateFromSetup(boolean deathLimitActive, int deathLimitValue, boolean canEditDeathLimit) {
+        this.deathLimitActive = deathLimitActive;
+        this.deathLimitValue = deathLimitValue;
+        this.canEditDeathLimit = canEditDeathLimit;
+        this.clearWidgets();
+        this.init();
     }
 }
