@@ -11,9 +11,20 @@ public class FirstTimeSetupScreen extends Screen {
     private boolean allowEditDeathLimit = true;
     private boolean deathLimitActive = true;
     private int deathLimitValue = 1;
+    private Screen parent = null;
 
     public FirstTimeSetupScreen() {
         super(Component.literal("Hardcore First Time Setup"));
+    }
+
+    public FirstTimeSetupScreen(Screen parent) {
+        super(Component.literal("Hardcore First Time Setup"));
+        this.parent = parent;
+        if (HardcoreTweaksClient.LATEST_SYNC_DATA != null) {
+            this.allowEditDeathLimit = HardcoreTweaksClient.LATEST_SYNC_DATA.canEditDeathLimit();
+            this.deathLimitActive = HardcoreTweaksClient.LATEST_SYNC_DATA.deathLimitActive();
+            this.deathLimitValue = HardcoreTweaksClient.LATEST_SYNC_DATA.deathLimitValue();
+        }
     }
 
     @Override
@@ -79,8 +90,15 @@ public class FirstTimeSetupScreen extends Screen {
                 old.spawnPenaltyRange(), this.deathLimitValue, this.allowEditDeathLimit, true
             ));
             
-            // Remove the screen
-            this.minecraft.setScreen(null);
+            // Remove the screen or go back to parent
+            if (this.parent != null) {
+                if (this.parent instanceof HardcoreSettingsScreen hss) {
+                    hss.updateFromSetup(this.deathLimitActive, this.deathLimitValue, this.allowEditDeathLimit);
+                }
+                this.minecraft.setScreen(this.parent);
+            } else {
+                this.minecraft.setScreen(null);
+            }
         }
     }
 }
