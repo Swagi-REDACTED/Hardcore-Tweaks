@@ -2,7 +2,7 @@
 
  
 
-A comprehensive mod designed to rebalance and enhance the Minecraft Hardcore experience! Fully updated for Minecraft 26.1.
+A comprehensive mod designed to rebalance and enhance the Minecraft Hardcore experience! Fully updated for Minecraft 26.1-26.1.2.
 
  
 
