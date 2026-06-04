@@ -31,7 +31,7 @@ public class HardcoreTweaks implements ModInitializer {
                     boolean valueChangedWhileActive = payload.deathLimitActive() && data.deathLimitActive && payload.deathLimitValue() != data.deathLimitValue;
                     
                     if (newlyActivated || valueChangedWhileActive) {
-                        data.deathLimitBase = data.getPlayerDeaths(player.getUUID());
+                        data.deathLimitBase = data.getPlayerDeaths(player);
                     }
 
                     data.spawnPenalty = payload.spawnPenalty();
@@ -60,7 +60,7 @@ public class HardcoreTweaks implements ModInitializer {
             ServerPlayNetworking.send(player, new SyncHardcoreDataPacket(
                 data.spawnPenalty, data.deathLimitActive, data.deathTrackerActive, data.allowSetSpawn,
                 data.spawnPenaltyRange, data.deathLimitValue, data.deathLimitBase, data.canEditDeathLimit,
-                data.firstTimeSetupDone, data.getPlayerDeaths(player.getUUID())
+                data.firstTimeSetupDone, data.getPlayerDeaths(player)
             ));
         } catch (Exception e) {
             LOGGER.error("Failed to sync HardcoreWorldData to player {}", player.getName().getString(), e);
