@@ -25,8 +25,7 @@ public class HardcoreWorldData extends SavedData {
             Codec.INT.optionalFieldOf("deathLimitValue", 1).forGetter(d -> d.deathLimitValue),
             Codec.INT.optionalFieldOf("deathLimitBase", 0).forGetter(d -> d.deathLimitBase),
             Codec.BOOL.optionalFieldOf("canEditDeathLimit", true).forGetter(d -> d.canEditDeathLimit),
-            Codec.BOOL.optionalFieldOf("firstTimeSetupDone", false).forGetter(d -> d.firstTimeSetupDone),
-            Codec.unboundedMap(UUIDUtil.STRING_CODEC, Codec.INT).optionalFieldOf("deathCounts", new HashMap<>()).forGetter(d -> d.deathCounts)
+            Codec.BOOL.optionalFieldOf("firstTimeSetupDone", false).forGetter(d -> d.firstTimeSetupDone)
         ).apply(i, HardcoreWorldData::new)
     );
 
@@ -40,13 +39,10 @@ public class HardcoreWorldData extends SavedData {
     public boolean canEditDeathLimit = true;
     public boolean firstTimeSetupDone = false;
 
-    public final Map<UUID, Integer> deathCounts;
-
     public HardcoreWorldData() {
-        this.deathCounts = new HashMap<>();
     }
 
-    private HardcoreWorldData(boolean spawnPenalty, boolean deathLimitActive, boolean deathTrackerActive, boolean allowSetSpawn, int spawnPenaltyRange, int deathLimitValue, int deathLimitBase, boolean canEditDeathLimit, boolean firstTimeSetupDone, Map<UUID, Integer> deathCounts) {
+    private HardcoreWorldData(boolean spawnPenalty, boolean deathLimitActive, boolean deathTrackerActive, boolean allowSetSpawn, int spawnPenaltyRange, int deathLimitValue, int deathLimitBase, boolean canEditDeathLimit, boolean firstTimeSetupDone) {
         this.spawnPenalty = spawnPenalty;
         this.deathLimitActive = deathLimitActive;
         this.deathTrackerActive = deathTrackerActive;
@@ -56,7 +52,6 @@ public class HardcoreWorldData extends SavedData {
         this.deathLimitBase = deathLimitBase;
         this.canEditDeathLimit = canEditDeathLimit;
         this.firstTimeSetupDone = firstTimeSetupDone;
-        this.deathCounts = new HashMap<>(deathCounts);
     }
 
     public static SavedDataType<HardcoreWorldData> type() {
@@ -72,12 +67,8 @@ public class HardcoreWorldData extends SavedData {
         return level.getServer().overworld().getDataStorage().computeIfAbsent(type());
     }
 
-    public int getPlayerDeaths(UUID uuid) {
-        return this.deathCounts.getOrDefault(uuid, 0);
+    public int getPlayerDeaths(net.minecraft.server.level.ServerPlayer player) {
+        return player.getStats().getValue(net.minecraft.stats.Stats.CUSTOM.get(net.minecraft.stats.Stats.DEATHS));
     }
 
-    public void addPlayerDeath(UUID uuid) {
-        this.deathCounts.put(uuid, this.getPlayerDeaths(uuid) + 1);
-        this.setDirty();
-    }
 }
