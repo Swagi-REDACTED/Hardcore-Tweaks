@@ -23,7 +23,7 @@ public abstract class ServerGamePacketListenerImplMixin {
         if (packet.getAction() == ServerboundClientCommandPacket.Action.PERFORM_RESPAWN) {
             if (this.player.level().getServer().isHardcore()) {
                 HardcoreWorldData data = HardcoreWorldData.get(this.player.level());
-                int deaths = data.getPlayerDeaths(this.player.getUUID());
+                int deaths = data.getPlayerDeaths(this.player);
                 
                 boolean shouldSpectate = true;
                 if (data.deathLimitActive) {
