@@ -41,19 +41,16 @@ public abstract class ServerPlayerMixin {
     @Inject(method = "die", at = @At("TAIL"))
     private void hardcoreTweaks$onDeath(DamageSource damageSource, CallbackInfo ci) {
         ServerPlayer self = (ServerPlayer)(Object)this;
-        if (self.level().getServer().isHardcore()) {
-            HardcoreWorldData data = HardcoreWorldData.get(self.level());
-            data.addPlayerDeath(self.getUUID());
-            
-            if (data.deathLimitActive) {
-                int currentDeaths = data.getPlayerDeaths(self.getUUID());
-                int threshold = data.deathLimitBase + data.deathLimitValue;
-                if (currentDeaths >= threshold) {
-                    self.setGameMode(net.minecraft.world.level.GameType.SPECTATOR);
-                }
+        HardcoreWorldData data = HardcoreWorldData.get(self.level());
+        
+        if (data.deathLimitActive) {
+            int currentDeaths = data.getPlayerDeaths(self);
+            int threshold = data.deathLimitBase + data.deathLimitValue;
+            if (currentDeaths >= threshold) {
+                self.setGameMode(net.minecraft.world.level.GameType.SPECTATOR);
             }
-            
-            HardcoreTweaks.syncDataToPlayer(self); // Sync the new death count!
         }
+        
+        HardcoreTweaks.syncDataToPlayer(self); // Sync the new death count!
     }
 }
